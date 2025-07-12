@@ -1,0 +1,52 @@
+#define perto 15 //cm
+#define branco 6
+
+#define motorDireita OUT_A
+#define rampa OUT_B
+#define motorEsquerda OUT_C
+
+#define sensorF Sensor(IN_2) // sensor ultrassonico 
+#define sensorE Sensor(IN_1) // Sensor de cor Esquerdo 
+#define sensorD Sensor(IN_3) // Sensor de cor Direito 
+
+task main() {
+  SetSensorLowspeed(IN_1);
+  SetSensorLowspeed(IN_2);
+  SetSensorLowspeed(IN_3);
+
+  Wait(5000);// espera 5 segundos
+  OnRev(rampa, 75);
+  Wait(250);// espera 0.25 segundos
+  OFF(rampa);
+  
+  while (true) {
+    // Sensor da Esquerda detecta a borda branca
+    if (sensorE == branco) {
+      // Gira para a Direita para se afastar da borda
+      OnFwd(motorDireita, 75);
+      OnRev(motorEsquerda, 75);
+      Wait(40);
+    }
+    // Sensor da Direita detecta a borda branca
+    else if (sensorD == branco) {
+      // Gira para a Esquerda para se afastar da borda
+      OnFwd(motorEsquerda, 75);
+      OnRev(motorDireita, 75);
+      Wait(40);
+    }
+    else {
+    // empurra pra frente com mais potencia 
+    OnRev(OUT_A,100);
+    OnRev(OUT_C,100);
+
+    Wait(40);
+    }
+    if (sensorF == perto) {
+      // levanta a rampa
+      OnFwd(rampa, 75);
+      Wait(300);
+      off(rampa, 75);
+      Wait(40);
+    }
+  }
+}
